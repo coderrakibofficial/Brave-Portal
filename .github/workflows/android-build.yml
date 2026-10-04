@@ -1,0 +1,49 @@
+name: Android Build
+
+on:
+  push:
+    branches:
+      - main
+      - 'feature/**'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Make Gradle executable
+        run: chmod +x gradlew
+
+      # Optional: enables push notifications in the built APK.
+      # Add the full content of Firebase's google-services.json as a repository secret
+      # named GOOGLE_SERVICES_JSON (Settings -> Secrets and variables -> Actions).
+      # Without the secret the APK still builds, just without push notifications.
+      - name: Add Firebase config (if secret exists)
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: |
+          if [ -n "$GOOGLE_SERVICES_JSON" ]; then
+            printf '%s' "$GOOGLE_SERVICES_JSON" > app/google-services.json
+            echo "Firebase config added"
+          else
+            echo "No GOOGLE_SERVICES_JSON secret - building without push notifications"
+          fi
+
+      - name: Build APK
+        run: ./gradlew assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: BRAVE-Portal-APK
+          path: app/build/outputs/apk/debug/app-debug.apk

@@ -1,0 +1,16 @@
+*.iml
+.gradle/
+local.properties
+.idea/
+build/
+captures/
+.externalNativeBuild/
+.cxx/
+# NEVER commit signing secrets
+keystore.properties
+*.jks
+*.keystore
+# Firebase client config + any server keys must never be committed
+google-services.json
+*service-account*.json
+*firebase-adminsdk*.json
