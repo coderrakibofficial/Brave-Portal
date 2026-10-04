@@ -1,0 +1,9 @@
+``` name: Android CI on push branches main pull_request branches main jobs build runs-on
+
+ubuntu latest steps checkout uses actions/checkout@v4
+
+setup JDK uses actions/setup-java@v4
+
+with distribution temurin java-version 17 Grant execute permission run chmod +x gradlew Build Debug APK run ./gradlew assembleDebug Upload Debug APK uses actions/upload-artifact@v4
+
+with name app-debug apk path app/build/outputs/apk/debug/app-debug.apk
